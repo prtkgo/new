@@ -1,0 +1,66 @@
+#!/bin/bash
+tabs=1
+sent=0
+ints=0
+sent1=0
+ints1=0
+sent2=0
+ints2=0
+
+tabber()
+{
+	i=$tabs
+	while [ $i -gt 0 ] 
+	do
+		echo -n "        "
+		i=$(($i-1))
+	done 
+
+}
+fun()
+{
+
+cd $1
+for line in *
+do
+	if [ -d "$line" ]
+	then
+	
+	tabber
+	sent=`egrep -o -d 'recurse' '[\.\!\?]' $line | wc -l`   
+	bent=`egrep -o -d 'recurse' '[0-9]\.[0-9]' $line | wc -l`
+	ints=`egrep -o -d 'recurse' '\-?[0-9]+' $line | wc -l`
+	sent=$(($sent-$bent)) 
+	ints=$(($ints-$bent-$bent))
+	echo "(D) $line-$sent-$ints"
+	tabs=$(($tabs+1))
+	fun $line
+	
+	fi
+
+	if [ -f "$line" ]
+	then
+	tabber
+	sent=`egrep -o  '[\.\!\?]' $line | wc -l`
+	bent=`egrep -o  '[0-9]\.[0-9]' $line | wc -l`
+	ints=`egrep -o  '\-?[0-9]+' $line | wc -l`
+	ints=$(($ints-$bent-$bent))
+	sent=$(($sent-$bent))
+	echo "(F) $line-$sent-$ints"
+	fi
+done
+tabs=$(($tabs-1))
+cd ..
+}
+if [ $# -ne 1 ]
+then echo "note : give path as argument"
+
+else
+sent=`egrep -o -d 'recurse' '[\.\!\?]' $1 | wc -l`   
+	bent=`egrep -o -d 'recurse' '[0-9]\.[0-9]' $1 | wc -l`
+	ints=`egrep -o -d 'recurse' '\-?[0-9]+' $1 | wc -l`
+	echo "(D) $1-$sent-$ints"
+
+fun $1
+	
+fi
